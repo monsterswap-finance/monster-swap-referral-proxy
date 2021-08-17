@@ -1,0 +1,110 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0x136e785f28589E076DC9419ce25fDD56349d8101",
+    "txHash": "0x081b62019541d22725e79701eda0d406a681d1f1240a20d9f92fd7bd5c34011c"
+  },
+  "proxies": [
+    {
+      "address": "0x5ee4761DF234289443F8E1B8D0690cDD6d3197cE",
+      "txHash": "0x14e0462251f32643dd885d0ab073780e1a2877ab135a339ecb68cce63e5a8fd1",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "30aef054b4a15668577df91cad5ebd937dc2dc001aa3d9fa1017e16e3de48271": {
+      "address": "0x75B89D8c009cf518E4aE25b5489d539F8719F23c",
+      "txHash": "0xd585f2b38e7a24e50fee363ffd0fc9dbef8203feb631baebed4afaa3ef57bf51",
+      "layout": {
+        "storage": [
+          {
+            "contract": "ReferralOwnable",
+            "label": "_owner",
+            "type": "t_address",
+            "src": "..\\..\\..\\..\\..\\..\\D\\Work\\Project\\QuantumSoft\\Monsterswap\\monster-swap-referral\\contracts\\ReferralOwnable.sol:5"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "..\\@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol:21"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "..\\@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol:26"
+          },
+          {
+            "contract": "Referral",
+            "label": "monstertoken",
+            "type": "t_contract(IERC20)1142",
+            "src": "..\\..\\..\\..\\..\\..\\D\\Work\\Project\\QuantumSoft\\Monsterswap\\monster-swap-referral\\contracts\\Referral.sol:12"
+          },
+          {
+            "contract": "Referral",
+            "label": "referralCommissionRate",
+            "type": "t_uint16",
+            "src": "..\\..\\..\\..\\..\\..\\D\\Work\\Project\\QuantumSoft\\Monsterswap\\monster-swap-referral\\contracts\\Referral.sol:15"
+          },
+          {
+            "contract": "Referral",
+            "label": "operators",
+            "type": "t_mapping(t_address,t_bool)",
+            "src": "..\\..\\..\\..\\..\\..\\D\\Work\\Project\\QuantumSoft\\Monsterswap\\monster-swap-referral\\contracts\\Referral.sol:17"
+          },
+          {
+            "contract": "Referral",
+            "label": "userInfo",
+            "type": "t_mapping(t_address,t_struct(UserInfo)73_storage)",
+            "src": "..\\..\\..\\..\\..\\..\\D\\Work\\Project\\QuantumSoft\\Monsterswap\\monster-swap-referral\\contracts\\Referral.sol:18"
+          }
+        ],
+        "types": {
+          "t_contract(IERC20)1142": {
+            "label": "contract IERC20"
+          },
+          "t_uint16": {
+            "label": "uint16"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)"
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_bool": {
+            "label": "bool"
+          },
+          "t_mapping(t_address,t_struct(UserInfo)73_storage)": {
+            "label": "mapping(address => struct Referral.UserInfo)"
+          },
+          "t_struct(UserInfo)73_storage": {
+            "label": "struct Referral.UserInfo",
+            "members": [
+              {
+                "label": "referrers",
+                "type": "t_address"
+              },
+              {
+                "label": "referralsCount",
+                "type": "t_uint256"
+              },
+              {
+                "label": "totalCommission",
+                "type": "t_uint256"
+              },
+              {
+                "label": "rewardDebt",
+                "type": "t_uint256"
+              }
+            ]
+          },
+          "t_uint256": {
+            "label": "uint256"
+          }
+        }
+      }
+    }
+  }
+}
