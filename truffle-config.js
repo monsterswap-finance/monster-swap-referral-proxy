@@ -16,7 +16,7 @@ module.exports = {
       provider: () =>
         new HDWalletProvider(
           BSC_TESTNET_DEPLOYER_KEY,
-          `https://data-seed-prebsc-2-s1.binance.org:8545`
+          `https://data-seed-prebsc-1-s2.binance.org:8545/`
         ),
       network_id: 97,
       confirmations: 2,
@@ -40,7 +40,7 @@ module.exports = {
   plugins: ["truffle-plugin-verify"],
   api_keys: {
     // Add BSCSCAN_API_KEY in .env file to verify contracts deployed through truffle
-    bscscan: "YPIWURJ86XSQTFXPCKU2B32J88WGK7XIQY",
+    bscscan: BSC_SCANAPI_KEY,
   },
   // Set default mocha options here, use special reporters etc.
   mocha: {

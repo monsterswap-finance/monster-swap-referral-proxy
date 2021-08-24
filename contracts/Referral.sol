@@ -16,7 +16,7 @@ contract Referral is ReferralOwnable, Initializable {
 
      mapping(address => bool) public operators;
      mapping(address => UserInfo) public userInfo;
-      struct UserInfo {
+     struct UserInfo {
         address referrers;     // Referrer address
         uint256 referralsCount; // Total referral downline count
         uint256 totalCommission; // Total earned referral commission (MONSTER)
@@ -28,6 +28,9 @@ contract Referral is ReferralOwnable, Initializable {
     event HarvestCommission(address indexed user, uint256 commission);
     event OperatorUpdated(address indexed operator, bool indexed status);
     event CommissionRateUpdated(uint256 previousAmount, uint256 newAmount);
+
+    // Max Referreal Commission : 5%
+    uint16 public constant MAXIMUM_REFERRAL_COMMISSIOn = 500;
 
     function initialize(IERC20 _monstertoken) public initializer
     {
@@ -43,8 +46,9 @@ contract Referral is ReferralOwnable, Initializable {
     // Change Commission Rate
     function setReferralCommissionRate(uint16 _referralCommissionRate) public onlyOperator {
         require(_referralCommissionRate >= 0, "setReferralCommissionRate: invalid referral commission rate basis points");
-        emit CommissionRateUpdated(referralCommissionRate, _referralCommissionRate);
+        require(_referralCommissionRate < MAXIMUM_REFERRAL_COMMISSIOn, "setReferralCommissionRate: Exceed Maximum commission rate.");        
         referralCommissionRate = _referralCommissionRate;        
+        emit CommissionRateUpdated(referralCommissionRate, _referralCommissionRate);
     }
 
     function updateOperator(address _operator, bool _status) external onlyOwner {
@@ -68,46 +72,49 @@ contract Referral is ReferralOwnable, Initializable {
     function CalculateCommission(address _user, uint256 _amount) public onlyOwner
     {  
         if (_amount > 0) {
-            UserInfo storage _userinfo = userInfo[_user];
-            address referrer = _userinfo.referrers;
+            
+            address referrer = userInfo[_user].referrers;
+            UserInfo storage _referralInfo = userInfo[referrer];
+            address referrer = userInfo[ReferralAddr].referrers;            
             uint256 commissionAmount = _amount.mul(referralCommissionRate).div(10000);            
 
             if (referrer != address(0) && commissionAmount > 0) {      
-                _userinfo.totalCommission = _userinfo.totalCommission.add(commissionAmount); 
-                _userinfo.rewardDebt += _userinfo.rewardDebt.add(commissionAmount);                          
+                _referralInfo.totalCommission = _referralInfo.totalCommission.add(commissionAmount); 
+                _referralInfo.rewardDebt = _referralInfo.rewardDebt.add(commissionAmount);                          
                 emit ReferralCommissionRecorded(_user, referrer, commissionAmount);
             }
         }
     }
 
-    function harvestCommission(uint256 _amount) public {          
-       require (_amount > 0, 'withdraw: not valid amount');          
-
-       UserInfo storage _userinfo = userInfo[msg.sender]; 
-       require(_userinfo.rewardDebt >= _amount, "withdraw: Insufficient");   
-       
-       uint256 tokenSupply = IERC20(monstertoken).balanceOf(address(this));
-       uint256 withdrawamount;
-
-        if (tokenSupply >= _amount)
-        { withdrawamount = _amount; }       
-       else { withdrawamount = tokenSupply; }
-
-        IERC20(monstertoken).safeTransfer(msg.sender, withdrawamount);    
-        userInfo[msg.sender].rewardDebt = _userinfo.rewardDebt.sub(withdrawamount);    
-
-       emit HarvestCommission(msg.sender, _amount);       
+    function harvestCommission() public 
+    {                
+        UserInfo storage _userinfo = userInfo[msg.sender];      
+        uint256 harvestAmount = _userinfo.rewardDebt;                        
+        userInfo[msg.sender].rewardDebt = 0;
+        safeMonsterTransfer(address(msg.sender), harvestAmount);
+        emit HarvestCommission(msg.sender, harvestAmount);       
     }
 
-     function getReferral(address _user) external view returns(address) {        
-        return  userInfo[_user].referrers;
+    function safeMonsterTransfer(address _to, uint256 _amount) internal {
+        uint256 MonsterBal = monstertoken.balanceOf(address(this));
+        bool transferSuccess = false;
+        if (_amount > MonsterBal) {
+            transferSuccess = monstertoken.transfer(_to, MonsterBal);
+        } else {
+            transferSuccess = monstertoken.transfer(_to, _amount);
+        }
+        require(transferSuccess, "safeMonsterTransfer: Transfer failed");
     }
 
-    function getPendingComm(address _user) external view returns(uint256) {        
-        return  userInfo[_user].rewardDebt;
-    }  
+   function getReferralInfo(address _user) public view returns(address referrers, uint256 referralsCount, uint256 totalCommission, uint256 rewardDebt) {
+        return (
+            address(userInfo[_user].referrers),
+            userInfo[_user].referralsCount,
+            userInfo[_user].totalCommission,
+            userInfo[_user].rewardDebt);
+    }
 
-     function drainBEP20Token(IERC20 _token, uint256 _amount, address _to) external onlyOwner {
+    function drainBEP20Token(IERC20 _token, uint256 _amount, address _to) external onlyOwner {
         _token.safeTransfer(_to, _amount);
     }
 
