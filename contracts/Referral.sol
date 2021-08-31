@@ -74,8 +74,7 @@ contract Referral is ReferralOwnable, Initializable {
         if (_amount > 0) {
             
             address referrer = userInfo[_user].referrers;
-            UserInfo storage _referralInfo = userInfo[referrer];
-            address referrer = userInfo[ReferralAddr].referrers;            
+            UserInfo storage _referralInfo = userInfo[referrer];                    
             uint256 commissionAmount = _amount.mul(referralCommissionRate).div(10000);            
             if (referrer != address(0) && commissionAmount > 0) {      
                 _referralInfo.totalCommission = _referralInfo.totalCommission.add(commissionAmount); 

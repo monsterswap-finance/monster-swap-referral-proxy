@@ -1,4 +1,4 @@
-const { BigNumber } = require("@ethersproject/bignumber");
+// const { BigNumber } = require("@ethersproject/bignumber");
 const { deployProxy, upgradeProxy } = require("@openzeppelin/truffle-upgrades");
 const Referral = artifacts.require("Referral");
 const MONSTER_TOKEN = "0x23040c7b54112a6E6e70559d49114Ed80C41C282";
