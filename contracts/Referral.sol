@@ -32,10 +32,11 @@ contract Referral is ReferralOwnable, Initializable {
     // Max Referreal Commission : 5%
     uint16 public constant MAXIMUM_REFERRAL_COMMISSIOn = 500;
 
-    function initialize(IERC20 _monstertoken) public initializer
+    function initialize(IERC20 _monstertoken, address _owner) public initializer
     {
         monstertoken = _monstertoken;
         referralCommissionRate = 100;
+        initOwner(_owner);
     }
 
     modifier onlyOperator {
@@ -69,7 +70,7 @@ contract Referral is ReferralOwnable, Initializable {
         }
     }
     
-    function CalculateCommission(address _user, uint256 _amount) public onlyOwner
+    function CalculateCommission(address _user, uint256 _amount) public onlyOperator
     {  
         if (_amount > 0) {
             
@@ -84,13 +85,17 @@ contract Referral is ReferralOwnable, Initializable {
         }
     }
 
+   
+
     function harvestCommission() public 
     {                
         UserInfo storage _userinfo = userInfo[msg.sender];      
-        uint256 harvestAmount = _userinfo.rewardDebt;                        
+        require(_userinfo.rewardDebt > 0, 'harvest: insufficient');
+        
+        uint256 harvestAmount = _userinfo.rewardDebt;      
         userInfo[msg.sender].rewardDebt = 0;
         safeMonsterTransfer(address(msg.sender), harvestAmount);
-        emit HarvestCommission(msg.sender, harvestAmount);       
+        emit HarvestCommission(msg.sender, harvestAmount);                    
     }
 
     function safeMonsterTransfer(address _to, uint256 _amount) internal {
@@ -105,11 +110,22 @@ contract Referral is ReferralOwnable, Initializable {
     }
 
    function getReferralInfo(address _user) public view returns(address referrers, uint256 referralsCount, uint256 totalCommission, uint256 rewardDebt) {
+
+
         return (
             address(userInfo[_user].referrers),
             userInfo[_user].referralsCount,
             userInfo[_user].totalCommission,
             userInfo[_user].rewardDebt);
+    }
+
+
+   function getReferrer(address _user) public view returns(address referrers) {
+        return address(userInfo[_user].referrers);            
+    }
+    
+    function getPendingComm(address _user) public view returns(uint256)  {       
+       return (userInfo[_user].rewardDebt);
     }
 
     function drainBEP20Token(IERC20 _token, uint256 _amount, address _to) external onlyOwner {

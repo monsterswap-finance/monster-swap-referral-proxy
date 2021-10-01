@@ -1,11 +1,13 @@
 // const { BigNumber } = require("@ethersproject/bignumber");
 const { deployProxy, upgradeProxy } = require("@openzeppelin/truffle-upgrades");
 const Referral = artifacts.require("Referral");
+
+const DEPLOYER_ACCOUNT = process.env.BSC_TESTNET_DEPLOYER_ACCOUNT;
 const MONSTER_TOKEN = "0x23040c7b54112a6E6e70559d49114Ed80C41C282";
 
 module.exports = async function (deployer) {
   console.log("Start Deployment Here");
-  const Proxy_Referral = await deployProxy(Referral, [MONSTER_TOKEN], {
+  const Proxy_Referral = await deployProxy(Referral, [MONSTER_TOKEN, DEPLOYER_ACCOUNT], {
     deployer,
     initializer: "initialize",
   });
