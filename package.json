@@ -1,5 +1,5 @@
 {
-  "name": "monster-referral",
+  "name": "monster-referral-proxy",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
